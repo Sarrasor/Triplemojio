@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="WebRTC game">
+	<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+	<meta itemprop="description" content="WebRTC game">
+	<meta itemprop="image" content="../images/icon.png">
+	<meta itemprop="name" content="WebRTC game">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta id="theme-color" name="theme-color" content="#ffffff">
+	
+	<base target="_blank">
+
+	<title>Triplemoji - a WebRTC p2p game</title>
+
+	<link rel="icon" sizes="192x192" href="../images/icon.png">
+	<link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+	<!-- include the style -->
+	<link rel="stylesheet" href="libs/alertify/css/alertify.min.css" />
+	<!-- include a theme -->
+	<link rel="stylesheet" href="libs/alertify/css/themes/default.min.css" />
+	<link rel="stylesheet" href="styles/style.css"/>
+
+	<script src="libs/socket.io.min.js"></script>
+	<script src="scripts/config.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<div class="header">
+		<img src="images/logo.png" class="logo-image">
+	</div>
+
+	<div class="body">
+		<div class="content">
+			<div class="left-part">
+				<div class="room-list-container" id="room_list_container">
+					<h2 class="room-list-heading">Available rooms</h2>
+					<ul class="room-list" id='room_list'></ul>
+				</div>
+			</div>
+
+			<div class="right-part" id="right_part">
+				<div class='player-selection' id="player_selection">
+					<div class="player-class-selection">
+						<h2 class="section-heading">1.Choose your hero</h2>
+						<div class="player-cards-container">
+							<label for="sqy_checkbox">
+								<div class="player-card">
+									<div class="card-image-box">
+										<img src="images/sqy.png" class="card-image">
+										<div class="card-image-overlay"></div>
+									</div>
+									<h2 class="card-title">Sqy</h2>
+									<p class="card-specs">has a lot of hp, but kinda slow</p>
+									<input name="player_selector_checkbox" id="sqy_checkbox" type="checkbox" class="hidden-checkbox"/>
+								</div>
+							</label>
+							
+							<label for="cii_checkbox">
+							<div class="player-card">
+								<div class="card-image-box">
+									<img src="images/cii.png" class="card-image">
+									<div class="card-image-overlay"></div>
+								</div>
+								<h2 class="card-title">Cii</h2>
+								<p class="card-specs">perfectly balanced (c) Thanos</p>
+								<input name="player_selector_checkbox" id="cii_checkbox" type="checkbox" class="hidden-checkbox"/>
+							</div>
+							</label>
+
+							<label for="tri_checkbox">
+							<div class="player-card">
+								<div class="card-image-box">
+									<img src="images/tri.png" class="card-image">
+									<div class="card-image-overlay"></div>
+								</div>
+								<h2 class="card-title">Tri</h2>
+								<p class="card-specs">fast and furious, and fragile</p>
+								<input name="player_selector_checkbox" id="tri_checkbox" type="checkbox" class="hidden-checkbox"/>
+							</div>
+							</label>
+						</div>
+					</div>
+
+					<div class="emoji-pack-selection">
+						<h2 class="section-heading">2.Choose your emoji pack</h2>
+
+						<label for="emoji_pack_checkbox">
+						<div class="emoji-pack-card">
+							<div class="card-image-box">
+								<img src="images/emoji_pack.png" class="card-image">
+								<div class="card-image-overlay"></div>
+							</div>
+							<h2 class="emoji-pack-title">Emoji pack</h2>
+							<input name="emoji_selector_checkbox" id="emoji_pack_checkbox" type="checkbox" class="hidden-checkbox"/>
+						</div>
+						</label>
+
+						<label for="pepe_pack_checkbox">
+						<div class="emoji-pack-card">
+							<div class="card-image-box">
+								<img src="images/pepe_pack.png" class="card-image">
+								<div class="card-image-overlay"></div>
+							</div>
+							<h2 class="emoji-pack-title">Pepe pack</h2>
+							<input name="emoji_selector_checkbox" id="pepe_pack_checkbox" type="checkbox" class="hidden-checkbox"/>
+						</div>
+						</label>
+
+						<label for="cat_pack_checkbox">
+						<div class="emoji-pack-card">
+							<div class="card-image-box">
+								<img src="images/cat_pack.png" class="card-image">
+								<div class="card-image-overlay"></div>
+							</div>
+							<h2 class="emoji-pack-title">Cat pack</h2>
+							<input name="emoji_selector_checkbox" id="cat_pack_checkbox" type="checkbox" class="hidden-checkbox"/>
+						</div>
+						</label>
+
+						<label for="animals_pack_checkbox">
+						<div class="emoji-pack-card">
+							<div class="card-image-box">
+								<img src="images/animals_pack.png" class="card-image">
+								<div class="card-image-overlay"></div>
+							</div>
+							<h2 class="emoji-pack-title">Animals pack</h2>
+							<input name="emoji_selector_checkbox" id="animals_pack_checkbox" type="checkbox" class="hidden-checkbox"/>
+						</div>
+						</label>
+					</div>
+
+					<div class="user-room-selection">
+
+						<h2 class="section-heading">3.Enter your username and room name</h2>
+
+						<form id="room_join_form">
+							<input class="input-field" type="text" id="name_input" name="name" placeholder="Username" required>
+							<input class="input-field" type="text" id="room_input" name="room" placeholder="Room name" required>
+							<input class="submit-button" type="submit" value="Join game">
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script src="libs/alertify/alertify.min.js"></script>
+<script src="scripts/main.js"></script>
+
+</body>
+
+</html>

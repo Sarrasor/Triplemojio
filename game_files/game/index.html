@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="WebRTC game">
+	<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+	<meta itemprop="description" content="WebRTC game">
+	<meta itemprop="image" content="../images/icon.png">
+	<meta itemprop="name" content="WebRTC game">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta id="theme-color" name="theme-color" content="#ffffff">
+	
+	<base target="_blank">
+
+	<title>Triplemoji - a WebRTC p2p game</title>
+
+	<link rel="icon" sizes="192x192" href="../images/icon.png">
+	<link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="styles/style.css"/>
+
+	<script src="../libs/webfontloader.min.js"></script>
+	<script src="../libs/phaser.min.js"></script>
+	<script src="../libs/socket.io.min.js"></script>
+	<script src="../libs/face-api.min.js"></script>
+	<script src="../libs/adapter.js"></script>
+</head>
+
+<body>
+
+<div class="left-part">
+	<div class="game-container-box">
+		<div class="game-container" id="game_container"></div>
+		<div class="game-container-overlay" id="game_container_overlay"></div>
+		<div class="kill-container">
+			<h1 class="kill-title" id="kill_title">You're dead</h1>
+			<p class="kill-message" id="kill_message">player killed you</p>
+		</div>
+	</div>
+
+	<div class="chat-container" id="chat_container"></div>
+</div>
+
+<div class="right-part">
+	<div class="video-containers">
+		<div class="video-container">
+			<video id="video_local" playsinline autoplay muted></video>
+		</div>
+
+		<div class="video-container">
+	    	<video id="video_remote_1" playsinline autoplay></video>
+		</div>
+		
+		<div class="video-container">
+	    	<video id="video_remote_2" playsinline autoplay></video>
+		</div>
+		
+		<div class="video-container">
+	    	<video id="video_remote_3" playsinline autoplay></video>
+		</div>
+
+		<div class="video-container">
+	    	<video id="video_remote_4" playsinline autoplay></video>
+		</div>
+		
+		<div class="video-container">
+	    	<video id="video_remote_5" playsinline autoplay></video>
+		</div>
+	</div>	
+
+	<div class="controls-container">
+		<div class="switch-container">
+			<p class="switch-name">Video:</p>
+			<label class="switch">
+	  			<!-- <input type="checkbox" id="video_switch"> -->
+	  			<input type="checkbox" id="video_switch" checked="true">
+	  			<span class="slider round"></span>
+			</label>
+		</div>
+
+		<div class="switch-container">
+			<p class="switch-name">Audio:</p>
+			<label class="switch">
+	  			<!-- <input type="checkbox" id="audio_switch"> -->
+	  			<input type="checkbox" id="audio_switch" checked="true">
+	  			<span class="slider round"></span>
+			</label>
+		</div>
+
+		<div class="switch-container">
+			<p class="switch-name">Share:</p>
+			<label class="switch">
+	  			<input type="checkbox" id="share_switch" checked="true">
+	  			<!-- <input type="checkbox" id="share_switch"> -->
+	  			<span class="slider"></span>
+			</label>
+		</div>
+
+		<button class="start-button" id="start_button">Start</button>
+	</div>
+</div>
+
+<script src="../scripts/config.js"></script>
+<script src="scripts/game_config.js"></script>
+<script src="scripts/emotion_recognition_config.js"></script>
+
+<script src="scripts/game_objects/bullet.js"></script>
+<script src="scripts/game_objects/bullet_group.js"></script>
+<script src="scripts/game_objects/player.js"></script>
+<script src="scripts/game_objects/my_player.js"></script>
+<script src="scripts/game_objects/remote_player.js"></script>
+<script src="scripts/game_objects/game_scene.js"></script>
+
+<script src="scripts/connections/events.js"></script>
+<script src="scripts/connections/message_builder.js"></script>
+<script src="scripts/connections/peer_connection.js"></script>
+<script src="scripts/connections/room_server_connection.js"></script>
+<script src="scripts/connections/game_room_connection.js"></script>
+<script src="scripts/main.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "Triplemoji",
+  "version": "1.0.0",
+  "description": "Triplemoji - a peer-to-peer WebRTC Game",
+  "main": "index.js",
+  "scripts": 
+  {
+    "room_server": "node room_server/server.js",
+    "game": "http-server ./game_files -p 8080 -c-1 -S -C certs/cert.pem -K certs/key.pem" 
+  },
+  "keywords": 
+  [
+    "game",
+    "webrtc",
+    "peer-to-peer",
+    "javascript"
+  ],
+  "author": "Daniil Burakov",
+  "license": "ISC",
+  "dependencies": 
+  {
+    "http-server": "^0.12.3",
+    "socket.io": "^3.1.1"
+  }
+}
