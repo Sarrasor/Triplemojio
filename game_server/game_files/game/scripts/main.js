@@ -38,27 +38,34 @@ const remote_videos =
 // Attach emotion detector to local video
 const video_local = document.querySelector('video#video_local');
 
-
-video_local.addEventListener('play', () => 
+if (ENABLE_RECOGNITION)
 {
-  setInterval(async () => 
+  console.log("Emotion recognition is enabled");
+  video_local.addEventListener('play', () => 
   {
-    if (video_switch.checked && detection_returned)
+    setInterval(async () => 
     {
-      detection_returned = false;
-      detectEmotions().then((detections) =>
+      if (video_switch.checked && detection_returned)
       {
-        detection_returned = true;
-        if (detections.length > 0)
+        detection_returned = false;
+        detectEmotions().then((detections) =>
         {
-          var expr = detections[0].expressions;
-          emotion = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
-          emotion = EmotionSelector[Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b)];
-        }
-      });
-    }
-  }, EMOTION_RECOGNITION_FREQUENCY)
-});
+          detection_returned = true;
+          if (detections.length > 0)
+          {
+            var expr = detections[0].expressions;
+            emotion = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
+            emotion = EmotionSelector[Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b)];
+          }
+        });
+      }
+    }, EMOTION_RECOGNITION_FREQUENCY)
+  });
+}
+else
+{
+  console.log("Emotion recognition is NOT enabled");
+}
 
 async function detectEmotions()
 {
@@ -66,13 +73,22 @@ async function detectEmotions()
 }
 
 // Load models
+if (ENABLE_RECOGNITION)
+{
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri('scripts/models'),
   faceapi.nets.faceExpressionNet.loadFromUri('scripts/models')
 ]).then(loadedModels);
+}
+else
+{
+  loadedModels();
+}
 
 function loadedModels() 
 {
+  showGame();
+
   if(!video_switch.checked && START_IMMEDIATELY)
   {
     startConnection();
@@ -123,7 +139,15 @@ function startLocalVideo()
         video: video_constraints
       })
       .then(gotStream)
-      .catch(e => console.log('getUserMedia() error: ', e));
+      .catch((e) =>
+      { 
+        if(START_IMMEDIATELY)
+        {
+          console.log("Starting connection without video permission")
+          startConnection();
+        }
+        console.log('getUserMedia() error: ', e)
+      });
 }
 
 function gotStream(stream)
@@ -204,4 +228,11 @@ function addChatMessage(prefix, content)
   // Possibility of injection
   // Do not allow user input to enter here
   chat_container.innerHTML += message;
+  chat_container.scrollTop = chat_container.scrollHeight;
+}
+
+function showGame() 
+{
+  document.getElementById("loader").className += " hidden";
+  document.getElementById("loader_overlay").className += " hidden";
 }

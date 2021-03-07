@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": 
   {
-    "room_server": "node room_server/server.js",
-    "game": "http-server ./game_files -p 8080 -c-1 -S -C certs/cert.pem -K certs/key.pem" 
+    "room_server": "node room_server/server/server.js",
+    "game_server": "http-server ./game_server/game_files -p 8080 -c-1 -S -C certificates/cert.pem -K certificates/key.pem" 
   },
   "keywords": 
   [

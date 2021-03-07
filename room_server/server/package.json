@@ -1,0 +1,19 @@
+{
+  "name": "Triplemoji room server",
+  "version": "1.0.0",
+  "description": "Triplemoji room server",
+  "main": "server.js",
+  "keywords": 
+  [
+    "game",
+    "webrtc",
+    "peer-to-peer",
+    "javascript"
+  ],
+  "author": "Daniil Burakov",
+  "license": "ISC",
+  "dependencies": 
+  {
+    "socket.io": "^3.1.1"
+  }
+}

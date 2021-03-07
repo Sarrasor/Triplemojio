@@ -185,13 +185,13 @@ class RoomServerConnection extends Events.Connection
 
 	broadcastMessage(message) 
 	{
-    	this.broadcast(MessageBuilder.serialize(message));
+    	this.broadcast(JSON.stringify(message));
   	}
 
 	sendMessageTo(peer_id, message) 
 	{
 	    var peer = this.peer_connections[peer_id];
-	    this.peerSend(peer, MessageBuilder.serialize(message));
+	    this.peerSend(peer, JSON.stringify(message));
 	}
 
 	broadcast(serialized_message) 

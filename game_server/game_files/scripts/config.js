@@ -1,4 +1,11 @@
-const SERVER_URL = 'https://' + window.location.hostname + ':1337';
+const LOCAL = false;
+
+var SERVER_URL = 'https://' + window.location.hostname + ':1337';
+if(!LOCAL)
+{
+  SERVER_URL = 'https://3a0649baa012.ngrok.io';
+}
+
 const GAME_PATH = '/game';
 const ROOM_CAPACITY = 6;
 
@@ -7,15 +14,15 @@ const ICE_SERVERS = [
     url: 'stun:stun.l.google.com:19302'
   },
 
-  {
-    url: 'stun:stun.anyfirewall.com:3478'
-  },
+  // {
+  //   url: 'stun:stun.anyfirewall.com:3478'
+  // },
 
-  {
-    url: 'turn:turn.bistri.com:80',
-    credential: 'homeo',
-    username: 'homeo'
-  },
+  // {
+  //   url: 'turn:turn.bistri.com:80',
+  //   credential: 'homeo',
+  //   username: 'homeo'
+  // },
 
   {
     url: 'turn:turn.anyfirewall.com:443?transport=tcp',
@@ -44,15 +51,6 @@ const Message =
 	ERROR_PLAYER_WAS_INITIALIZED: "error_player_was_initialized"
 };
 
-const MESSAGE_PLAYER_STATE = 0;
-const MESSAGE_PLAYER_SHOOT = 1;
-const MESSAGE_PLAYER_DEAD = 2;
-
-const FIELD_TYPE = 'type';
-const FIELD_EMOTION = 'emotion';
-const FIELD_X = 'x';
-const FIELD_Y = 'y';
-const FIELD_ROTATION = 'rotation';
-const FIELD_VELOCITY_X = 'velocity_x';
-const FIELD_VELOCITY_Y = 'velocity_y';
-const FIELD_KILLER_ID = 'killer_id';
+const MESSAGE_PLAYER_STATE = "player_state";
+const MESSAGE_PLAYER_SHOOT = "player_shoot";
+const MESSAGE_PLAYER_DEAD = "player_dead";

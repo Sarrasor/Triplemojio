@@ -13,6 +13,6 @@ class RemotePlayer extends Player
         this.setY(state_message.y + CONTAINER_HEIGHT / 2);
         // this.body.setVelocityX(state_message.velocity_x);
         // this.body.setVelocityY(state_message.velocity_y);
-        this.player.rotation = Phaser.Math.DegToRad(state_message.rotation);
+        this.player.rotation = state_message.rotation;
     }
 }

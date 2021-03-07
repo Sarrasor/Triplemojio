@@ -1,3 +1,5 @@
+const ALIVE_ZOOM = 0.8;
+
 const RESPAWN_DELAY = 6000;
 const BULLET_OFFSET_X = 58.5;
 const BULLET_OFFSET_Y = 50;

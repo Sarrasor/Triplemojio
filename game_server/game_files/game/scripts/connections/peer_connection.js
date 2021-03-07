@@ -51,20 +51,26 @@ class PeerConnection extends Events.Connection
   	});
 
   	// TODO: remove when peer reconnection is implemented
-  	if (video_switch.checked && share_switch.checked)
+  	if (local_stream && video_switch.checked && share_switch.checked)
   	{
     	const video_tracks = local_stream.getVideoTracks();
- 	    if (video_tracks.length > 0)
+ 	    if (video_tracks && video_tracks.length > 0)
  	    {
  	    	this.log("Using video device: ${video_tracks[0].label}", 'gray');
  	    	this.peer_connection.addTrack(video_tracks[0], local_stream);
  	    }
-	    }
+      const audio_tracks = local_stream.getAudioTracks();
+      if (audio_tracks && audio_tracks.length > 0)
+      {
+        this.log("Using audio device: ${audio_tracks[0].label}", 'gray');
+        this.peer_connection.addTrack(audio_tracks[0], local_stream);
+      }
+	   }
   	// TODO: remove when peer reconnection is implemented
 
   	var context = this;
     this.peer_connection.ontrack = gotRemoteStream;
-    function gotRemoteStream(e) 
+    function gotRemoteStream(e)
 		{
 	  	if (remote_videos[context.video_index].srcObject !== e.streams[0]) 
 	  	{
@@ -266,7 +272,7 @@ class PeerConnection extends Events.Connection
 
 	onDataChannelMessage(message) 
 	{
-  	this.emit('message', MessageBuilder.deserialize(message.data));
+  	this.emit('message', JSON.parse(message.data));
 	}
 
 	onDataChannelClose() 

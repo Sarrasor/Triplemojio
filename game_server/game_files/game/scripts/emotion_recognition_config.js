@@ -1,3 +1,4 @@
+const ENABLE_RECOGNITION = true;
 const EMOTION_RECOGNITION_FREQUENCY = 2000;
 
 const Emotion = 

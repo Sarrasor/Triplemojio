@@ -56,6 +56,11 @@ room_join_form.onsubmit = function()
 
 	function checkName(player_name, room_name)
 	{
+		if (!rooms_list_data)
+		{
+			return true;
+		}
+
 		if (Object.keys(rooms_list_data.room_player_names).indexOf(room_name) === -1)
 		{	
 			return true;
@@ -124,7 +129,7 @@ room_list.onclick = function(event)
 
     function getClickRoomItem(e) 
 	{
-		var content = event.path[2].innerHTML;
+		var content = event.composedPath()[2].innerHTML;
 		var regexp = /<div class="room-title[^"]*?">(.*?)<\/div>/g;
 
 		if (content.match(regexp).length > 1) return "";

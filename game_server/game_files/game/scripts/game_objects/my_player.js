@@ -9,11 +9,20 @@ class MyPlayer extends Player
     rotateLeft()
     {
         this.player.rotation -= this.player_class.angular_velocity;
+        this.updateVelocity();
     }
 
     rotateRight()
     {
         this.player.rotation += this.player_class.angular_velocity;
+        this.updateVelocity();
+    }
+
+    updateVelocity()
+    {
+        var v = Math.sqrt(this.getVelocityX() * this.getVelocityX() + this.getVelocityY() * this.getVelocityY());
+        this.body.setVelocity(Math.cos(this.player.rotation) * v, 
+                              Math.sin(this.player.rotation) * v);
     }
 
     moveForward()

@@ -10,10 +10,10 @@ class GameScene extends Phaser.Scene
 		this.my.player_name = game_room.room_server_connection.player_name;
 		this.my.player_class = PlayerClassSelector[game_room.room_server_connection.player_class];
 		this.my.player_emoji_pack_name = game_room.room_server_connection.player_emoji_pack_name;
-        this.my.map_array = game_room.map;
-		this.my.map_width = game_room.map[0].length;
-        this.my.map_height = game_room.map.length; 
         this.my.tile_size = WALL_IMAGE_SIZE;
+        this.my.map_array = game_room.map;
+		this.my.world_width = game_room.map[0].length * this.my.tile_size;
+        this.my.world_height = game_room.map.length * this.my.tile_size; 
 
         this.my.remote_players = {};
         this.my.player_objects = [];
@@ -67,6 +67,10 @@ class GameScene extends Phaser.Scene
 
         // Controls
 		this.my.motion_keys = this.input.keyboard.createCursorKeys();
+        this.my.key_W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.my.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.my.key_S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.my.key_D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.my.shoot_keys = 
         [
             this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
@@ -76,8 +80,8 @@ class GameScene extends Phaser.Scene
         // Set world size
         this.physics.world.setBounds(0,
                                      0, 
-                                     this.my.map_width * this.my.tile_size, 
-                                     this.my.map_height * this.my.tile_size);
+                                     this.my.world_width, 
+                                     this.my.world_height);
 
         // Create walls
         var tilemap = this.make.tilemap(
@@ -100,8 +104,14 @@ class GameScene extends Phaser.Scene
         this.my.player_objects.push(this.my.player);
         
         // Set camera
-        this.cameras.main.zoom = 1;
+        this.cameras.main.zoom = ALIVE_ZOOM;
         this.cameras.main.startFollow(this.my.player);
+
+        this.minimap = this.cameras.add(20, 420, 280, 310).setZoom(300 / this.my.world_height).setName('mini');
+        // this.minimap.setBackgroundColor('rgba(79, 227, 87, 0.7)');
+        this.minimap.setBackgroundColor('rgba(0, 0, 0, 1)');
+        this.minimap.scrollX = this.my.world_width / 2 - 150;
+        this.minimap.scrollY = this.my.world_height / 2 - 150;
 
         // Spawn player
         var position = this.getRandomSpawnPosition();
@@ -110,43 +120,50 @@ class GameScene extends Phaser.Scene
         // Vector for collision detection
         this.my.delta_vector = new Phaser.Math.Vector2();
 
-        this.my.map_center = this.add.text(this.my.map_width * this.my.tile_size / 2, this.my.map_height * this.my.tile_size / 2, "");
+        this.my.map_center = this.add.text(this.my.world_width / 2, this.my.world_height / 2, "");
 	   
         addChatMessage("Server", "Welcome, " + this.my.player_name);
     }
 
 	update()
 	{
-		if (this.my.motion_keys.left.isDown)
+        var was_pressed = false;
+		if (this.my.motion_keys.left.isDown || this.my.key_A.isDown)
         {
             this.my.player.rotateLeft();
+            was_pressed = true;
         }
-        else if (this.my.motion_keys.right.isDown)
+        if (this.my.motion_keys.right.isDown || this.my.key_D.isDown)
         {
             this.my.player.rotateRight();
+            was_pressed = true;
         }
-        else if (this.my.motion_keys.up.isDown)
+        if (this.my.motion_keys.up.isDown || this.my.key_W.isDown)
         {
             this.my.player.moveForward();
+            was_pressed = true;
         }
-        else if (this.my.motion_keys.down.isDown)
+        if (this.my.motion_keys.down.isDown || this.my.key_S.isDown)
         {
             this.my.player.moveBackward();
+            was_pressed = true;
         }
-        else
+        if (!was_pressed)
         {
             this.my.player.stop();
         }
         this.my.player.setEmotion(emotion);
 
-        this.my.connection.broadcastMessage(MessageBuilder.createMessage(MESSAGE_PLAYER_STATE)
-        	.setEmotion(this.my.player.getEmotion())
-        	.setX(this.my.player.getX())
-      		.setY(this.my.player.getY())
-      		.setRotation(this.my.player.getRotation())
-      		.setVelocityX(this.my.player.getVelocityX())
-      		.setVelocityY(this.my.player.getVelocityY())
-        	);
+        this.my.connection.broadcastMessage(
+        {
+            type: MESSAGE_PLAYER_STATE,
+            emotion: this.my.player.getEmotion(),
+            x: this.my.player.getX(),
+            y: this.my.player.getY(),
+            rotation: this.my.player.getRotation(),
+            velocity_x: this.my.player.getVelocityX(),
+            velocity_y: this.my.player.getVelocityY()
+        });
 
         this.my.shoot_keys.forEach(key => 
         {
@@ -154,11 +171,13 @@ class GameScene extends Phaser.Scene
             {
                 var bullet_state = this.my.player.shoot();
 
-                this.my.connection.broadcastMessage(MessageBuilder.createMessage(MESSAGE_PLAYER_SHOOT)
-                    .setX(bullet_state.x)
-                    .setY(bullet_state.y)
-                    .setRotation(bullet_state.rotation)
-                    );
+                this.my.connection.broadcastMessage(
+                {
+                    type: MESSAGE_PLAYER_SHOOT,
+                    x: bullet_state.x,
+                    y: bullet_state.y,
+                    rotation: bullet_state.rotation,
+                });
             }
         });
 
@@ -204,8 +223,8 @@ class GameScene extends Phaser.Scene
                 }
             }
         }
-        var spawn_indices = candidates[Math.floor(Math.random() * candidates.length)]
-        // var spawn_indices = candidates[0];
+        // var spawn_indices = candidates[Math.floor(Math.random() * candidates.length)]
+        var spawn_indices = candidates[0];
         return {x: this.my.tile_size * spawn_indices[0] + this.my.tile_size / 2,
                 y: this.my.tile_size * spawn_indices[1] + this.my.tile_size / 2}
     }
@@ -217,7 +236,7 @@ class GameScene extends Phaser.Scene
         // console.log(player_info);
 
     	var remote_player = this.my.remote_players[player_info.player_id];
-    	if (!remote_player && message.getType() === MESSAGE_PLAYER_STATE) 
+    	if (!remote_player && message.type === MESSAGE_PLAYER_STATE) 
     	{
       		console.log('%cCreating remote player for id %s', 'color: blue;', player_info.player_id);
       		remote_player = new RemotePlayer(this, 
@@ -237,7 +256,7 @@ class GameScene extends Phaser.Scene
     	}
 
     	// Add message switches
-    	switch (message.getType()) 
+    	switch (message.type) 
     	{
     		case MESSAGE_PLAYER_STATE:
         	   this.onRemotePlayerState(remote_player, message);

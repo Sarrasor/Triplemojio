@@ -62,7 +62,7 @@ class Player extends Phaser.GameObjects.Container
                 document.getElementById("kill_message").className = "kill-message";
 
                 this.scene.cameras.main.startFollow(this);
-                this.scene.cameras.main.zoom = 1;
+                this.scene.cameras.main.zoom = ALIVE_ZOOM;
             }
         }
     }
@@ -96,13 +96,22 @@ class Player extends Phaser.GameObjects.Container
 
             if (respawn)
             {
-                // this.scene.my.connection.broadcastMessage(MessageBuilder.createMessage(MESSAGE_PLAYER_DEAD)
-                    // .setKillerId(killer_id)
-                    // );
+                // this.scene.my.connection.broadcastMessage(
+                //     {
+                //         type: MESSAGE_PLAYER_DEAD,
+                //         killer_id: killer_id
+                //     });
 
-                console.log("%s killed %s", killer_name, this.player_name);
+                // console.log("%s killed %s", killer_name, this.player_name);
 
-                addChatMessage("Server", killer_name + " killed " + this.player_name);
+                if (killer_id != this.player_id)
+                {
+                    addChatMessage("Server", killer_name + " killed " + this.player_name);
+                }
+                else
+                {
+                   addChatMessage("Server", this.player_name + " died by suicide"); 
+                }
 
 
                 if (!this.remote_player)
@@ -176,7 +185,7 @@ class Player extends Phaser.GameObjects.Container
 
     getRotation()
     {
-        return Phaser.Math.RadToDeg(this.player.rotation);
+        return this.player.rotation;
     }
 
     getEmotion()

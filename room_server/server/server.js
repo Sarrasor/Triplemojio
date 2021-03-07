@@ -1,3 +1,7 @@
+const LOCAL = false;
+const HOSTNAME = "1f994c4db413.ngrok.io";
+
+var log = console.log.bind(console);
 var map_generator = require('./map_generator');
 
 var ROOM_SERVER_PORT = 1337;
@@ -8,16 +12,24 @@ const https = require("https");
 
 var options = 
 {
-  key: fs.readFileSync('certs/key.pem'),
-  cert: fs.readFileSync('certs/cert.pem'),
-  requestCert: false,
-  rejectUnauthorized: false
+	requestCert: false,
+	rejectUnauthorized: false
 };
+
+if (LOCAL)
+{
+	options["cert"] = fs.readFileSync("./certificates/cert.pem");
+	options["key"] = fs.readFileSync("./certificates/key.pem");
+}
+else
+{
+	options["cert"] = fs.readFileSync("/etc/letsencrypt/live/" + HOSTNAME + "/fullchain.pem");
+	options["key"] = fs.readFileSync("/etc/letsencrypt/live/" + HOSTNAME + "/privkey.pem");
+}
 
 var server = https.createServer(options);
 server.listen(ROOM_SERVER_PORT);
 
-var log = console.log.bind(console);
 var io = require('socket.io')(server, 
 {
 	cors: 
@@ -343,4 +355,4 @@ function processConnection(socket)
 }
 
 io.on('connection', processConnection);
-log('Running room server on port %d', ROOM_SERVER_PORT);
+log('I am running room server on port %d', ROOM_SERVER_PORT);
