@@ -1,14 +1,10 @@
-const LOCAL = false;
-const HOSTNAME = "1f994c4db413.ngrok.io";
-
 var log = console.log.bind(console);
 var map_generator = require('./map_generator');
+var config = require('./config');
 
-var ROOM_SERVER_PORT = 1337;
-var ROOM_CAPACITY = 6;
+const https = require("https");
 
 var fs = require('fs');
-const https = require("https");
 
 var options = 
 {
@@ -16,19 +12,19 @@ var options =
 	rejectUnauthorized: false
 };
 
-if (LOCAL)
+if (config.LOCAL)
 {
-	options["cert"] = fs.readFileSync("./certificates/cert.pem");
-	options["key"] = fs.readFileSync("./certificates/key.pem");
+	options["cert"] = fs.readFileSync("./certificates/certbot/conf/live/localhost/fullchain.pem");
+	options["key"] = fs.readFileSync("./certificates/certbot/conf/live/localhost/privkey.pem");
 }
 else
 {
-	options["cert"] = fs.readFileSync("/etc/letsencrypt/live/" + HOSTNAME + "/fullchain.pem");
-	options["key"] = fs.readFileSync("/etc/letsencrypt/live/" + HOSTNAME + "/privkey.pem");
+	options["cert"] = fs.readFileSync("/etc/letsencrypt/live/" + config.HOSTNAME + "/fullchain.pem");
+	options["key"] = fs.readFileSync("/etc/letsencrypt/live/" + config.HOSTNAME + "/privkey.pem");
 }
 
 var server = https.createServer(options);
-server.listen(ROOM_SERVER_PORT);
+server.listen(config.ROOM_SERVER_PORT);
 
 var io = require('socket.io')(server, 
 {
@@ -179,7 +175,10 @@ class Room
 
   	messageToPlayer(player_id, message_type, data)
   	{
-    	this.sockets[player_id].emit(message_type, data);
+  		if (this.sockets[player_id])
+  		{
+    		this.sockets[player_id].emit(message_type, data);
+    	}
   	}
 
   	broadcastFromPlayer(from_player_id, message_type, data)
@@ -250,7 +249,7 @@ function processConnection(socket)
 	    room = getRoom(data.room_name);
 
 	    // Check if the room is full
-	    if (room.size() >= ROOM_CAPACITY) 
+	    if (room.size() >= config.ROOM_CAPACITY) 
 	    {
 	      socket.emit(Message.ERROR_FULL_ROOM, {});
 	      return;
@@ -355,4 +354,4 @@ function processConnection(socket)
 }
 
 io.on('connection', processConnection);
-log('I am running room server on port %d', ROOM_SERVER_PORT);
+log('I am running room server on port %d', config.ROOM_SERVER_PORT);

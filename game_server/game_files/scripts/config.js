@@ -1,34 +1,38 @@
-const LOCAL = false;
-
-var SERVER_URL = 'https://' + window.location.hostname + ':1337';
-if(!LOCAL)
-{
-  SERVER_URL = 'https://3a0649baa012.ngrok.io';
-}
-
 const GAME_PATH = '/game';
 const ROOM_CAPACITY = 6;
 
-const ICE_SERVERS = [
+const ICE_SERVERS = 
+[
+  { url: 'stun:stun.l.google.com:19302' },
+  { url: 'stun:stun1.l.google.com:19302' },
+  { url: 'stun:stun2.l.google.com:19302' },
+  { url: 'stun:stun3.l.google.com:19302' },
+  
   {
-    url: 'stun:stun.l.google.com:19302'
+      url: 'turn:numb.viagenie.ca',
+      credential: 'muazkh',
+      username: 'webrtc@live.com'
   },
-
-  // {
-  //   url: 'stun:stun.anyfirewall.com:3478'
-  // },
-
-  // {
-  //   url: 'turn:turn.bistri.com:80',
-  //   credential: 'homeo',
-  //   username: 'homeo'
-  // },
-
   {
-    url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-    credential: 'webrtc',
-    username: 'webrtc'
-  }
+      url: 'turn:192.158.29.39:3478?transport=udp',
+      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+      username: '28224511:1379330808'
+  },
+  {
+      url: 'turn:192.158.29.39:3478?transport=tcp',
+      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+      username: '28224511:1379330808'
+  },
+  {
+      url: 'turn:turn.bistri.com:80',
+      credential: 'homeo',
+      username: 'homeo'
+  },
+  // {
+  //     url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+  //     credential: 'webrtc',
+  //     username: 'webrtc'
+  // }
 ]
 
 const Message = 

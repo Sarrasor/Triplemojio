@@ -1,11 +1,16 @@
 #!/bin/bash
 
 if ! [ -x "$(command -v docker-compose)" ]; then
-  echo 'Error: docker-compose is not installed.' >&2
+  echo 'Error: docker-compose is not installed' >&2
   exit 1
 fi
 
-domains=(1f994c4db413.ngrok.io)
+if [[ -z "${GAME_SERVER}" ]]; then
+  echo 'Error: GAME_SERVER variable was not set' >&2
+  exit 1
+fi
+
+domains=("${GAME_SERVER}")
 rsa_key_size=4096
 data_path="./certificates/certbot"
 email="" # Adding a valid address is strongly recommended
@@ -20,14 +25,14 @@ fi
 
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
-  echo "### Downloading recommended TLS parameters ..."
+  echo "### Downloading recommended TLS parameters..."
   mkdir -p "$data_path/conf"
   curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
   curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "$data_path/conf/ssl-dhparams.pem"
   echo
 fi
 
-echo "### Creating dummy certificate for $domains ..."
+echo "### Creating dummy certificate for $domains..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
 docker-compose run --rm --entrypoint "\
@@ -37,12 +42,14 @@ docker-compose run --rm --entrypoint "\
     -subj '/CN=localhost'" certbot
 echo
 
+echo "### Rebuilding containers..."
+docker-compose build --no-cache
 
-echo "### Starting game server ..."
+echo "### Starting game server..."
 docker-compose up --force-recreate -d game_server
 echo
 
-echo "### Deleting dummy certificate for $domains ..."
+echo "### Deleting dummy certificate for $domains..."
 docker-compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
@@ -50,7 +57,7 @@ docker-compose run --rm --entrypoint "\
 echo
 
 
-echo "### Requesting Let's Encrypt certificate for $domains ..."
+echo "### Requesting Let's Encrypt certificate for $domains..."
 #Join $domains to -d args
 domain_args=""
 for domain in "${domains[@]}"; do
@@ -76,5 +83,5 @@ docker-compose run --rm --entrypoint "\
     --force-renewal" certbot
 echo
 
-echo "### Shutting down ..."
+echo "### Shutting down..."
 docker-compose down

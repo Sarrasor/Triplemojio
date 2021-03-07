@@ -233,7 +233,7 @@ class PeerConnection extends Events.Connection
 	onIceConnectionStateChanged(event) 
 	{
   	this.log('Connection state: ' + event.target.iceConnectionState, 'green');
-	}
+  }
 
 	onDataChannel(event) 
 	{

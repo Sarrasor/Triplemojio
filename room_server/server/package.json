@@ -1,7 +1,7 @@
 {
-  "name": "Triplemoji room server",
+  "name": "Triplemojio room server",
   "version": "1.0.0",
-  "description": "Triplemoji room server",
+  "description": "Triplemojio room server",
   "main": "server.js",
   "keywords": 
   [

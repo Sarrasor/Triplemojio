@@ -1,0 +1,9 @@
+authtoken: <your auth token>
+tunnels:
+  game_server:
+    addr: https://127.0.0.1
+    proto: http
+  room_server:
+    addr: https://127.0.0.1:1337
+    proto: http
+    bind_tls: true

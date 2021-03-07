@@ -21,7 +21,7 @@ class GameScene extends Phaser.Scene
         this.my.connection_handlers = 
         {
       		'message': this.onRemotePlayerMessage,
-      		'remote_player_leave': this.onRemotePlayerLeave
+      		'closed': this.onRemotePlayerLeave
     	};
 	}
 
@@ -291,9 +291,7 @@ class GameScene extends Phaser.Scene
     onRemotePlayerLeave(data)
     {
     	console.log("Remote player " + data.player_id + " left the room");
-
     	var remote_player = this.my.remote_players[data.player_id];
-
         addChatMessage("Server", remote_player.player_name + " left the room");
 
 	    if (remote_player)
