@@ -2,6 +2,18 @@
 
 ## Features
 
+### Choose your hero
+
+You can choose your hero and emoji pack, and join the room!
+
+![choose your hero](images/choose_your_hero.gif)
+
+### Battle
+
+The game is a multiplayer action game. Time to battle!
+
+![battle](images/battle.gif)
+
 ### Peer-to-peer WebRTC
 
 Rooms are WebRTC peer-to-peer. Server is required only for the peer connection signalling and game files retrieval

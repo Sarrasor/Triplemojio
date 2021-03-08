@@ -1,5 +1,5 @@
-const LOCAL = false;
-const HOSTNAME = "c71b400e0fc7.ngrok.io";
+const LOCAL = true;
+const HOSTNAME = "localhost";
 var ROOM_SERVER_PORT = 1337;
 var ROOM_CAPACITY = 6;
 
