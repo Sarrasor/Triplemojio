@@ -4,94 +4,95 @@
 
 class Connection
 {
-  constructor()
-  {
-  	this.last_token = 0;
-    this.subscribers = {};
-  }
-
-  destroy() 
-  {
-    this.subscribers = null;
-  }
-
-  emit(event) 
-  {
-    var emit_arguments = [].slice.call(arguments, 1);
-    for (var i in this.subscribers) 
+    constructor()
     {
-      var subscriber = this.subscribers[i];
-      if (subscriber.event === event) 
-      {
-        subscriber.handler.apply(subscriber.context, emit_arguments);
-      }
+        this.last_event_id = 0;
+        this.events = {};
     }
-  }
 
-  on(event, handler, context) 
-  {
-    var token = ++this.last_token;
-    this.subscribers[token] = {
-							    event: event,
-							    handler: handler,
-							    context: context
-							  };
+    destroy()
+    {
+        this.events = null;
+    }
 
-    return token;
-  }
+    emit(event_name)
+    {
+        var emit_arguments = [].slice.call(arguments, 1);
+        for (var i in this.events)
+        {
+            var event = this.events[i];
+            if (event.event_name === event_name)
+            {
+                event.handler.apply(event.context, emit_arguments);
+            }
+        }
+    }
 
-  off(token) 
-  {
-    delete this.subscribers[token];
-  }
+    on(event_name, handler, context)
+    {
+        var event_id = ++this.last_event_id;
+        this.events[event_id] =
+        {
+            event_name: event_name,
+            handler: handler,
+            context: context
+        };
+
+        return event_id;
+    }
+
+    off(event_id)
+    {
+        delete this.events[event_id];
+    }
 }
 
-Events = 
+Events =
 {
-  Connection: Connection,
+    Connection: Connection,
 
-  listen: function() 
-  {
-    this._listen('addEventListener', arguments);
-  },
-
-  unlisten: function() 
-  {
-    this._unlisten('removeEventListener', arguments);
-  },
-
-  on: function() 
-  {
-    this._listen('on', arguments);
-  },
-
-  off: function() 
-  {
-    this._unlisten('off', arguments);
-  },
-
-  _listen: function(method, argsObject) 
-  {
-    var args = [].slice.apply(argsObject);
-    var object = args[0];
-    var handlers = args[1];
-    var context = args[2];
-    var bindArgs = args.slice(2);
-    for (var k in handlers) 
+    listen: function ()
     {
-      var bound = context[k + '_bound'] = handlers[k].bind.apply(handlers[k], bindArgs);
-      object[method](k, bound);
-    }
-  },
+        this._listen("addEventListener", arguments);
+    },
 
-  _unlisten: function(method, args) 
-  {
-    var object = args[0];
-    var handlers = args[1];
-    var context = args[2];
-    for (var k in handlers) 
+    unlisten: function ()
     {
-      object[method](k, context[k + '_bound']);
+        this._unlisten("removeEventListener", arguments);
+    },
+
+    on: function ()
+    {
+        this._listen("on", arguments);
+    },
+
+    off: function ()
+    {
+        this._unlisten("off", arguments);
+    },
+
+    _listen: function (method, argsObject)
+    {
+        var args = [].slice.apply(argsObject);
+        var object = args[0];
+        var handlers = args[1];
+        var context = args[2];
+        var bindArgs = args.slice(2);
+        for (var k in handlers)
+        {
+            var bound = context[k + "_bound"] = handlers[k].bind.apply(handlers[k], bindArgs);
+            object[method](k, bound);
+        }
+    },
+
+    _unlisten: function (method, args)
+    {
+        var object = args[0];
+        var handlers = args[1];
+        var context = args[2];
+        for (var k in handlers)
+        {
+            object[method](k, context[k + "_bound"]);
+        }
     }
-  }
 };

@@ -91,7 +91,7 @@ function loadedModels()
 
   if(!video_switch.checked && START_IMMEDIATELY)
   {
-    startConnection();
+    startGame();
   }
 
   // console.log("Loaded models");
@@ -144,7 +144,7 @@ function startLocalVideo()
         if(START_IMMEDIATELY)
         {
           console.log("Starting connection without video permission")
-          startConnection();
+          startGame();
         }
         console.log('getUserMedia() error: ', e)
       });
@@ -164,7 +164,7 @@ function gotStream(stream)
 
   if(START_IMMEDIATELY)
   {
-    startConnection();
+    startGame();
   }
 }
 
@@ -193,26 +193,25 @@ function stopLocalVideo()
 start_button.onclick = function()
 {
 	start_button.disabled = true;
-  startConnection();
+  startGame();
 };
 
-function startConnection()
+function startGame()
 {
   if(!created_game_room)
   {
     created_game_room = true;
 
-    // console.log("Creating Game Room connection");
-    var game_room_connection = new GameRoomConnection(SERVER_URL,
-                                                      room_name,
-                                                      player_name,
-                                                      player_class, 
-                                                      player_emoji_pack_name,
-                                                      token
-                                                      );
+    var game_room = new GameRoom(SERVER_URL,
+                                 room_name,
+                                 player_name,
+                                 player_class, 
+                                 player_emoji_pack_name,
+                                 token
+                                 );
     window.onbeforeunload = function() 
     {
-        game_room_connection.disconnect();
+        game_room.disconnect();
     };
   }
 }

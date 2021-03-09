@@ -30,7 +30,7 @@ class BulletGroup extends Phaser.Physics.Arcade.Group
         });
     }
 
-    spawnBullet(x, y, rotation) 
+    spawnBullet(x, y, direction) 
     {
         var cur_time = new Date().getTime();
         if (cur_time > this.next_fire_time)
@@ -54,7 +54,7 @@ class BulletGroup extends Phaser.Physics.Arcade.Group
                     });
                 });
 
-                bullet.spawn(x, y, rotation);
+                bullet.spawn(x, y, direction);
             }
         }
     }

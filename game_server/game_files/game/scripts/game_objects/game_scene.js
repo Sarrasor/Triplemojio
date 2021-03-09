@@ -18,11 +18,14 @@ class GameScene extends Phaser.Scene
         this.my.remote_players = {};
         this.my.player_objects = [];
 
-        this.my.connection_handlers = 
-        {
-      		'message': this.onRemotePlayerMessage,
-      		'closed': this.onRemotePlayerLeave
-    	};
+        this.my.connection_handlers = {};
+        // Messages from peers
+        this.my.connection_handlers[Message.PEER_OPEN] = this.onPeerOpen;
+        this.my.connection_handlers[Message.PEER_CLOSE] = this.onPeerClose;
+        this.my.connection_handlers[Message.PEER_MESSAGE] = this.onPeerMessage;
+        // Messages from the room server
+  		this.my.connection_handlers[Message.PLAYER_LEAVE] = this.onRemotePlayerLeave;
+        this.my.connection_handlers[Message.PLAYER_READY] = this.onRemotePlayerReady;
 	}
 
 	preload()
@@ -107,11 +110,11 @@ class GameScene extends Phaser.Scene
         this.cameras.main.zoom = ALIVE_ZOOM;
         this.cameras.main.startFollow(this.my.player);
 
-        this.minimap = this.cameras.add(20, 420, 280, 310).setZoom(300 / this.my.world_height).setName('mini');
-        // this.minimap.setBackgroundColor('rgba(79, 227, 87, 0.7)');
-        this.minimap.setBackgroundColor('rgba(0, 0, 0, 1)');
-        this.minimap.scrollX = this.my.world_width / 2 - 150;
-        this.minimap.scrollY = this.my.world_height / 2 - 150;
+        this.my.minimap = this.cameras.add(20, 420, 280, 310).setZoom(300 / this.my.world_height).setName('mini');
+        // this.my.minimap.setBackgroundColor('rgba(79, 227, 87, 0.7)');
+        this.my.minimap.setBackgroundColor('rgba(0, 0, 0, 1)');
+        this.my.minimap.scrollX = this.my.world_width / 2 - 150;
+        this.my.minimap.scrollY = this.my.world_height / 2 - 150;
 
         // Spawn player
         var position = this.getRandomSpawnPosition();
@@ -156,7 +159,7 @@ class GameScene extends Phaser.Scene
 
         this.my.connection.broadcastMessage(
         {
-            type: MESSAGE_PLAYER_STATE,
+            type: Message.PLAYER_STATE,
             emotion: this.my.player.getEmotion(),
             x: this.my.player.getX(),
             y: this.my.player.getY(),
@@ -173,7 +176,7 @@ class GameScene extends Phaser.Scene
 
                 this.my.connection.broadcastMessage(
                 {
-                    type: MESSAGE_PLAYER_SHOOT,
+                    type: Message.PLAYER_SHOOT,
                     x: bullet_state.x,
                     y: bullet_state.y,
                     rotation: bullet_state.rotation,
@@ -229,14 +232,24 @@ class GameScene extends Phaser.Scene
                 y: this.my.tile_size * spawn_indices[1] + this.my.tile_size / 2}
     }
 
-    onRemotePlayerMessage(message, player_info, peer_connection)
+    onPeerOpen(player_info, peer_connection)
+    {
+        console.log("On peer open");
+    }
+
+    onPeerClose(player_info, peer_connection)
+    {
+        console.log("On peer close");
+    }
+
+    onPeerMessage(message, player_info, peer_connection)
     {
     	// console.log("Remote player message from %s", player_info.player_name);
 		// console.log(message);
         // console.log(player_info);
 
     	var remote_player = this.my.remote_players[player_info.player_id];
-    	if (!remote_player && message.type === MESSAGE_PLAYER_STATE) 
+    	if (!remote_player && message.type === Message.PLAYER_STATE) 
     	{
       		console.log('%cCreating remote player for id %s', 'color: blue;', player_info.player_id);
       		remote_player = new RemotePlayer(this, 
@@ -258,15 +271,15 @@ class GameScene extends Phaser.Scene
     	// Add message switches
     	switch (message.type) 
     	{
-    		case MESSAGE_PLAYER_STATE:
+    		case Message.PLAYER_STATE:
         	   this.onRemotePlayerState(remote_player, message);
         	   break;
 
-            case MESSAGE_PLAYER_SHOOT:
+            case Message.PLAYER_SHOOT:
                 this.onRemotePlayerShoot(remote_player, message);
                 break;
 
-            case MESSAGE_PLAYER_DEAD:
+            case Message.PLAYER_DEAD:
                 this.onRemotePlayerDead(remote_player, message);
                 break;
     	}
@@ -300,5 +313,10 @@ class GameScene extends Phaser.Scene
           remote_player.destroy();
 	      delete this.my.remote_players[data.player_id];
 	    }
+    }
+
+    onRemotePlayerReady(data)
+    {
+        console.log("Remote player ready");
     }
 }

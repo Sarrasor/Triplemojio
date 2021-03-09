@@ -32,18 +32,6 @@ If you share your video, your emotions will be recognized and your character's e
 
 ![emotion recognition](images/emotion_recognition.gif)
 
-## Repository structure
-
-- `game_server` - Game source code
-- `room_server` - Room Server source code
-- `docker-compose.yml` - Docker compose with Game Server, Room Server, and Certbot services
-- `get_certificates.sh` - script to receive Let's Encrypt TLS certificates
-- `get_ngrok_tunnels.py` - Python script to get names of running Ngrok tunnels
-- `ngrok_config.yml` - Ngrok tunnel configuration file
-- `package.json` - npm package description
-- `run_local.sh` - script to update configs to run the game locally
-- `run_ngrok.sh` - script to update configs to run the game with Ngrok
-
 ## How to run
 
 Clone the repository first:
@@ -116,7 +104,7 @@ docker-compose build --no-cache
 docker-compose up
 ```
 
-### Receiving Letsencrypt certificate
+### Receiving Let's Encrypt certificate
 
 Since modern browsers allow WebRTC video and audio only via HHTPS, you might want to create an HTTPS server. In order for an HTTPS server to work, you will need some TLS certificates
 
@@ -134,3 +122,47 @@ Ngrok tunnels run in the background. If you need to stop it:
 ps ax | grep ngrok
 kill <ngrok pid from the previous command>
 ```
+
+## Implementation info
+
+Here you can find some impementation insights 
+
+### Repository structure
+
+- `game_server` - Game source code
+	- `game_files` - game code
+		- `game` - game field code
+			- `assets` - game assets such as sprites and textures
+			- `scripts` - game field scripts
+				- `connections` - game networking scripts
+				- `game_objects` - game classes
+				- `models` - emotion recognition models
+				- `emotion_recognition_config.js`
+				- `game_config.js`
+				- `main.js`
+			- `styles` - game field css styles
+			- `index.html` - game field page
+		- `images` - images for the player selection page
+		- `libs` - min.js versions of required libraries
+		- `scripts` - player selection page scripts
+		- `styles` - player selection page css styles
+		- `404.html` - 404 page
+		- `index.html` - player selection page
+	- `nginx.conf` - config of the nginx static server
+- `room_server` - Room Server source code
+- `docker-compose.yml` - Docker compose with Game Server, Room Server, and Certbot services
+
+- `get_certificates.sh` - script to receive Let's Encrypt TLS certificates
+- `get_ngrok_tunnels.py` - Python script to get names of running Ngrok tunnels
+- `ngrok_config.yml` - Ngrok tunnel configuration file
+- `package.json` - npm package description
+- `run_local.sh` - script to update configs to run the game locally
+- `run_ngrok.sh` - script to update configs to run the game with Ngrok
+
+### Physical view
+
+![Physical view](images/physical_view.png)
+
+### Class diagram
+
+![Class diagram](images/class_diagram.png)
