@@ -22,9 +22,9 @@ class PeerConnection extends Events.Connection
         this.pending_ice_candidates = [];
 
         this.peer_handlers = {};
-        this.data_channel_handlers[Message.WEBRTC_ICE_CANDIDATE] = this.onLocalICECandidate;
-        this.data_channel_handlers[Message.WEBRTC_ICE_STATE_CHANGE] = this.onICEConnectionStateChanged;
-        this.data_channel_handlers[Message.WEBRTC_DATA_CHANNEL] = this.onDataChannel;
+        this.peer_handlers[Message.WEBRTC_ICE_CANDIDATE] = this.onLocalICECandidate;
+        this.peer_handlers[Message.WEBRTC_ICE_STATE_CHANGE] = this.onICEConnectionStateChanged;
+        this.peer_handlers[Message.WEBRTC_DATA_CHANNEL] = this.onDataChannel;
 
         this.data_channel_handlers = {};
         this.data_channel_handlers[Message.PEER_OPEN] = this.onDataChannelOpen;
