@@ -53,6 +53,7 @@ In the first terminal:
 ```
 chmod +x run_local.sh
 ./run_local.sh
+npm install
 npm run game_server
 ```
 
@@ -66,7 +67,23 @@ Now you can go to `https://localhost:8080`
 
 ### Running in Docker
 
-If you want to deploy the game on your server, then go for Docker:
+If you want to deploy the game on your server, then go for Docker.
+
+If you don't have Docker and Docker Compose on your machine, you will have to install it. Check out [this](https://docs.docker.com/compose/install/) link.
+
+To check that you have Docker Compose installed:
+
+```
+docker-compose --version
+```
+
+It should give something like this:
+
+```
+docker-compose version 1.24.1, build 4667896b
+```
+
+Now you can deploy the game:
 
 ```
 chmod +x run_local.sh
