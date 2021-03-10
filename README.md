@@ -86,11 +86,11 @@ docker-compose version 1.24.1, build 4667896b
 Now you can deploy the game:
 
 ```
-chmod +x run_local.sh
-./run_local.sh
-docker-compose build --no-cache
-docker-compose up
+chmod +x run_local_docker.sh
+./run_local_docker.sh
 ```
+
+The game will be accecible here: `https://localhost`
 
 ### Ngrok tunnels
 

@@ -2,6 +2,7 @@ version: '3'
 services:
   game_server:
     build: ./game_server
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -10,6 +11,7 @@ services:
       - ./certificates/certbot/www:/var/www/certbot
   room_server:
     build: ./room_server
+    restart: unless-stopped
     ports:
       - "1337:1337"
     volumes:
